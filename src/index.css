@@ -1,0 +1,87 @@
+
+@import "@fontsource/outfit";
+@import "@fontsource/space-grotesk";
+@import "tailwindcss";
+
+/* global css  */
+:root {
+  --background: #050816;
+  --card: #0b1120;
+  --primary: #38bdf8;
+  --secondary: #8b5cf6;
+  --text: #ffffff;
+  --subtext: #94a3b8;
+  --border: #1e293b;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  cursor: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: "Outfit", sans-serif;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+
+/* aboutImage border animation  */
+/* ===============================
+      ABOUT IMAGE BORDER
+================================== */
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+/* ===============================
+    Moving Gradient Border
+================================== */
+
+@keyframes gradientBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+.animate-gradient-border {
+  background-size: 300% 300%;
+  animation: gradientBorder 4s linear infinite;
+}
