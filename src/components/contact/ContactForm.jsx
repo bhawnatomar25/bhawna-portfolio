@@ -31,7 +31,7 @@ function ContactForm() {
       name="contact"
       method="POST"
       data-netlify="true"
-      onSubmit={handleSubmit}
+     
       className="
         rounded-3xl
         border
