@@ -1,6 +1,29 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 function Scroll3D({ children }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  // 📱 Mobile screen par normal content
+  if (isMobile) {
+    return <>{children}</>;
+  }
+
+  // 💻 Tablet + Desktop par 3D animation
   return (
     <motion.div
       initial={{
