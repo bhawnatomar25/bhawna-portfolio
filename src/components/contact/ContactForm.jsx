@@ -1,6 +1,9 @@
 function ContactForm() {
   return (
     <form
+      name="contact"
+      method="POST"
+      data-netlify="true"
       className="
         rounded-3xl
         border
@@ -11,6 +14,9 @@ function ContactForm() {
         shadow-[0_0_40px_rgba(15,23,42,0.35)]
       "
     >
+      {/* Netlify Form Detection */}
+      <input type="hidden" name="form-name" value="contact" />
+
       {/* Name + Email */}
       <div className="grid gap-6 md:grid-cols-2">
 
@@ -22,7 +28,9 @@ function ContactForm() {
 
           <input
             type="text"
+            name="name"
             placeholder="Your Name"
+            required
             className="
               w-full
               rounded-xl
@@ -51,7 +59,9 @@ function ContactForm() {
 
           <input
             type="email"
+            name="email"
             placeholder="your@email.com"
+            required
             className="
               w-full
               rounded-xl
@@ -83,7 +93,9 @@ function ContactForm() {
 
         <input
           type="text"
+          name="subject"
           placeholder="Project Discussion"
+          required
           className="
             w-full
             rounded-xl
@@ -114,7 +126,9 @@ function ContactForm() {
 
         <textarea
           rows="6"
+          name="message"
           placeholder="Tell me about your project..."
+          required
           className="
             w-full
             resize-none
