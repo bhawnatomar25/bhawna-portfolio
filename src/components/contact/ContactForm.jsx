@@ -1,9 +1,37 @@
+import { useState } from "react";
+
 function ContactForm() {
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch("/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then(() => {
+        setSubmitted(true);
+        form.reset();
+      })
+      .catch((error) => {
+        alert("Something went wrong. Please try again.");
+        console.error(error);
+      });
+  }
+
   return (
     <form
       name="contact"
       method="POST"
       data-netlify="true"
+      onSubmit={handleSubmit}
       className="
         rounded-3xl
         border
@@ -16,6 +44,13 @@ function ContactForm() {
     >
       {/* Netlify Form Detection */}
       <input type="hidden" name="form-name" value="contact" />
+
+      {/* Success Message */}
+      {submitted && (
+        <div className="mb-6 rounded-xl border border-green-400/30 bg-green-400/10 p-4 text-green-400">
+          Message sent successfully! 🎉
+        </div>
+      )}
 
       {/* Name + Email */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -86,7 +121,6 @@ function ContactForm() {
 
       {/* Subject */}
       <div className="mt-6 flex flex-col gap-3">
-
         <label className="text-sm font-medium text-slate-300">
           Subject
         </label>
@@ -114,12 +148,10 @@ function ContactForm() {
             focus:ring-cyan-400
           "
         />
-
       </div>
 
       {/* Message */}
       <div className="mt-6 flex flex-col gap-3">
-
         <label className="text-sm font-medium text-slate-300">
           Message
         </label>
@@ -148,7 +180,6 @@ function ContactForm() {
             focus:ring-cyan-400
           "
         ></textarea>
-
       </div>
 
       {/* Button */}
@@ -171,7 +202,6 @@ function ContactForm() {
       >
         Send Message
       </button>
-
     </form>
   );
 }
