@@ -3,11 +3,110 @@ import { useState } from "react";
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
 
+  const [errors, setErrors] = useState({});
+
+  function validateField(name, value) {
+    const trimmedValue = value.trim();
+
+    // Name validation
+    if (name === "name") {
+      if (!trimmedValue) {
+        return "Name is required";
+      }
+
+      if (/[0-9]/.test(value)) {
+        return "Numbers are not allowed in name";
+      }
+
+      if (!/^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/.test(value)) {
+        return "Only letters, spaces, hyphens and apostrophes are allowed";
+      }
+
+      return "";
+    }
+
+    // Email validation
+    if (name === "email") {
+      if (!trimmedValue) {
+        return "Email is required";
+      }
+
+      const emailRegex =
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if (!emailRegex.test(trimmedValue)) {
+        return "Please enter a valid email address";
+      }
+
+      return "";
+    }
+
+    // Subject validation
+    if (name === "subject") {
+      if (!trimmedValue) {
+        return "Subject is required";
+      }
+
+      return "";
+    }
+
+    // Message validation
+    if (name === "message") {
+      if (!trimmedValue) {
+        return "Message is required";
+      }
+
+      return "";
+    }
+
+    return "";
+  }
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    const errorMessage = validateField(name, value);
+
+    setErrors((previousErrors) => ({
+      ...previousErrors,
+      [name]: errorMessage,
+    }));
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
 
     const form = event.target;
     const formData = new FormData(form);
+
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const subject = formData.get("subject");
+    const message = formData.get("message");
+
+    const newErrors = {
+      name: validateField("name", name),
+      email: validateField("email", email),
+      subject: validateField("subject", subject),
+      message: validateField("message", message),
+    };
+
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some(
+      (error) => error !== ""
+    );
+
+    if (hasErrors) {
+      return;
+    }
+
+    // Honeypot bot protection
+    const botField = formData.get("bot-field");
+
+    if (botField) {
+      return;
+    }
 
     fetch("/", {
       method: "POST",
@@ -18,6 +117,7 @@ function ContactForm() {
     })
       .then(() => {
         setSubmitted(true);
+        setErrors({});
         form.reset();
       })
       .catch((error) => {
@@ -31,7 +131,8 @@ function ContactForm() {
       name="contact"
       method="POST"
       data-netlify="true"
-     
+      data-netlify-honeypot="bot-field"
+      onSubmit={handleSubmit}
       className="
         rounded-3xl
         border
@@ -44,6 +145,15 @@ function ContactForm() {
     >
       {/* Netlify Form Detection */}
       <input type="hidden" name="form-name" value="contact" />
+
+      {/* Honeypot Bot Protection */}
+      <input
+        type="text"
+        name="bot-field"
+        tabIndex="-1"
+        autoComplete="off"
+        className="hidden"
+      />
 
       {/* Success Message */}
       {submitted && (
@@ -65,12 +175,11 @@ function ContactForm() {
             type="text"
             name="name"
             placeholder="Your Name"
-            required
-            className="
+            onChange={handleChange}
+            className={`
               w-full
               rounded-xl
               border
-              border-slate-700
               bg-[#0B1120]
               px-4
               py-3
@@ -79,11 +188,20 @@ function ContactForm() {
               placeholder:text-slate-600
               transition-all
               duration-300
-              focus:border-cyan-400
+              ${
+                errors.name
+                  ? "border-red-400 focus:border-red-400 focus:ring-red-400"
+                  : "border-slate-700 focus:border-cyan-400 focus:ring-cyan-400"
+              }
               focus:ring-1
-              focus:ring-cyan-400
-            "
+            `}
           />
+
+          {errors.name && (
+            <p className="text-sm text-red-400">
+              ⚠️ {errors.name}
+            </p>
+          )}
         </div>
 
         {/* Email */}
@@ -96,12 +214,11 @@ function ContactForm() {
             type="email"
             name="email"
             placeholder="your@email.com"
-            required
-            className="
+            onChange={handleChange}
+            className={`
               w-full
               rounded-xl
               border
-              border-slate-700
               bg-[#0B1120]
               px-4
               py-3
@@ -110,11 +227,20 @@ function ContactForm() {
               placeholder:text-slate-600
               transition-all
               duration-300
-              focus:border-cyan-400
+              ${
+                errors.email
+                  ? "border-red-400 focus:border-red-400 focus:ring-red-400"
+                  : "border-slate-700 focus:border-cyan-400 focus:ring-cyan-400"
+              }
               focus:ring-1
-              focus:ring-cyan-400
-            "
+            `}
           />
+
+          {errors.email && (
+            <p className="text-sm text-red-400">
+              ⚠️ {errors.email}
+            </p>
+          )}
         </div>
 
       </div>
@@ -129,12 +255,11 @@ function ContactForm() {
           type="text"
           name="subject"
           placeholder="Project Discussion"
-          required
-          className="
+          onChange={handleChange}
+          className={`
             w-full
             rounded-xl
             border
-            border-slate-700
             bg-[#0B1120]
             px-4
             py-3
@@ -143,11 +268,20 @@ function ContactForm() {
             placeholder:text-slate-600
             transition-all
             duration-300
-            focus:border-cyan-400
+            ${
+              errors.subject
+                ? "border-red-400 focus:border-red-400 focus:ring-red-400"
+                : "border-slate-700 focus:border-cyan-400 focus:ring-cyan-400"
+            }
             focus:ring-1
-            focus:ring-cyan-400
-          "
+          `}
         />
+
+        {errors.subject && (
+          <p className="text-sm text-red-400">
+            ⚠️ {errors.subject}
+          </p>
+        )}
       </div>
 
       {/* Message */}
@@ -160,13 +294,12 @@ function ContactForm() {
           rows="6"
           name="message"
           placeholder="Tell me about your project..."
-          required
-          className="
+          onChange={handleChange}
+          className={`
             w-full
             resize-none
             rounded-xl
             border
-            border-slate-700
             bg-[#0B1120]
             px-4
             py-3
@@ -175,11 +308,20 @@ function ContactForm() {
             placeholder:text-slate-600
             transition-all
             duration-300
-            focus:border-cyan-400
+            ${
+              errors.message
+                ? "border-red-400 focus:border-red-400 focus:ring-red-400"
+                : "border-slate-700 focus:border-cyan-400 focus:ring-cyan-400"
+            }
             focus:ring-1
-            focus:ring-cyan-400
-          "
+          `}
         ></textarea>
+
+        {errors.message && (
+          <p className="text-sm text-red-400">
+            ⚠️ {errors.message}
+          </p>
+        )}
       </div>
 
       {/* Button */}

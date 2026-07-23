@@ -29,7 +29,7 @@ function ContactInfo() {
       </div>
 
       {/* Phone */}
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <div className="contact-icon">
           <FaPhone />
         </div>
@@ -43,7 +43,7 @@ function ContactInfo() {
             +91 7056819453
           </a>
         </div>
-      </div>
+      </div> */}
 
       {/* Location */}
       <div className="flex items-center gap-4">
